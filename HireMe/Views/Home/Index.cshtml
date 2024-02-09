@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Home Page";
+ 
+}
+
+
+<style>
+    .jumbotron-custom {
+        background: linear-gradient(45deg, #007bff, #6610f2);
+        color: white;
+        padding: 4rem 0;
+    }
+
+    .feature-box {
+        padding: 2rem;
+        margin: 1rem 0;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-radius: 15px;
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .feature-box:hover {
+            transform: translateY(-10px);
+        }
+
+    .cta-section {
+        padding: 2rem 0;
+        background-color: #f8f9fa;
+        border-top: 5px solid #007bff;
+    }
+
+    .cta-button {
+        font-size: 1.2rem;
+        padding: 0.75rem 1.5rem;
+    }
+
+
+</style>
+
+ 
+ 
+
+<div class="jumbotron jumbotron-fluid text-center jumbotron-custom">
+    <div class="container">
+        @if (User.IsInRole("Admin"))
+        {
+            <h1 class="display-3">Welcome, Admin</h1>
+            <p class="lead">Manage the platform and assist users.</p>
+            <a href="/AdminDashboard" class="btn btn-primary btn-lg">Admin Dashboard</a>
+        }
+        else if (User.IsInRole("JobSeeker"))
+        {
+            <h1 class="display-3">Find Your Next Opportunity</h1>
+            <p class="lead">Browse and apply to exciting job openings.</p>
+            <a href="/JobSeekers" class="btn btn-primary btn-lg">View Jobs</a>
+        }
+        else if (User.IsInRole("Employer"))
+        {
+            <h1 class="display-3">Welcome, Employer</h1>
+            <p class="lead">Find talented individuals to join your team.</p>
+            <a href="/Employers/" class="btn btn-primary btn-lg">Post a Job</a>
+        }
+        else
+        {
+            <h1 class="display-3">Join Hire Me</h1>
+            <p class="lead">Connect to opportunities and showcase your talents to employers worldwide.</p>
+            <a href="/Register" class="btn btn-secondary btn-lg">Join Now</a>
+        }
+    </div>
+</div>
+
+
+<div class="container text-center my-5">
+    <h2 class="mb-4">Why Choose Hire Me?</h2>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="feature-box">
+                <h3>Wide Range of Jobs</h3>
+                <p>Explore numerous opportunities across various fields and industries.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box">
+                <h3>Easy Application</h3>
+                <p>Apply to jobs with just a few clicks and track your application status.</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="feature-box">
+                <h3>Get Noticed</h3>
+                <p>Create a profile that stands out and connects you with potential employers.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center cta-section">
+    <h2>Ready to Start?</h2>
+    <p>Join our community and take the next step in your career.</p>
+    <a href="#" class="btn btn-primary cta-button">Sign Up Now</a>
+</div>

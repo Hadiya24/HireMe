@@ -1,0 +1,64 @@
+﻿@{
+    ViewData["Title"] = "Employer Dashboard";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">Employer Dashboard</h1>
+
+    <div class="row text-center">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Total Jobs Posted</h2>
+                    <p class="display-4">@ViewBag.TotalJobsByEmployer</p>  
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Applications Received</h2>
+                    <p class="display-4">45</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Active Listings</h2>
+                    <p class="display-4">5</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h2>Manage Your Job Postings</h2>
+        <table class="table table-hover mt-3">
+            <thead>
+                <tr>
+                    <th>Job Title</th>
+                    <th>Applications</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Senior Software Engineer</td>
+                    <td>20</td>
+                    <td>Open</td>
+                    <td>
+                        <a href="#" class="btn btn-primary btn-sm">Edit</a>
+                        <a href="#" class="btn btn-danger btn-sm">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-4">
+        <a href="/Employers/PostJob" class="btn btn-success">Post a New Job</a>
+    </div>
+</div>

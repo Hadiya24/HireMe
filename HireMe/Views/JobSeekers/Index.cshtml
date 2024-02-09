@@ -1,0 +1,110 @@
+﻿@model IEnumerable<HireMe.Models.Job>
+
+@{
+    ViewData["Title"] = "Job Listings";
+}
+
+<div class="container mt-5">
+    <div class="row">
+      
+        <div class="col-md-3">
+            <div class="mb-4">
+                <h5>Filter by Type</h5>
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">Full-Time</a>
+                    <a href="#" class="list-group-item list-group-item-action">Part-Time</a>
+                    <a href="#" class="list-group-item list-group-item-action">Contract</a>
+                    <a href="#" class="list-group-item list-group-item-action">Internship</a>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h5>Filter by Location</h5>
+                <input type="text" class="form-control" placeholder="Enter location">
+            </div>
+
+         
+            <div class="mb-4">
+                <h5>Filter by Salary</h5>
+                <div class="d-flex justify-content-between mb-2">
+                    <span id="salaryMinValue">$0</span>
+                    <span id="salaryMaxValue">$10,000+</span>
+                </div>
+                <input type="range" class="form-range" id="salaryMin" min="0" max="10000" step="100" value="0" oninput="updateSalaryValues()">
+                <input type="range" class="form-range" id="salaryMax" min="0" max="10000" step="100" value="10000" oninput="updateSalaryValues()">
+            </div>
+
+
+
+      
+        </div>
+
+      
+        <div class="col-md-9">
+            <h1 class="display-4">Find Your Dream Job</h1>
+            <p class="lead">Explore a wide range of opportunities in various fields.</p>
+
+            <div class="input-group mb-4">
+                <input type="text" class="form-control" placeholder="Search job titles or companies">
+                <button class="btn btn-outline-secondary" type="button">Search</button>
+            </div>
+
+            <div class="row">
+                @foreach (var job in Model)
+                {
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100 border-0 shadow">
+                            <div class="card-body">
+                                <h5 class="card-title">@job.JobTitle</h5>
+                                <h6 class="card-subtitle mb-2 text-muted">@job.Location</h6>
+                                <p class="card-text">@Truncate(job.JobDescription, 100)</p>
+                                <a href="/jobs/details/@job.Id" class="btn btn-primary">View More</a>
+                            </div>
+                            <div class="card-footer text-muted">
+                                Posted on @job.PostedOn.ToString("dd MMM yyyy")
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function updateSalaryValues() {
+            var salaryMin = document.getElementById('salaryMin');
+            var salaryMax = document.getElementById('salaryMax');
+            var salaryMinValue = document.getElementById('salaryMinValue');
+            var salaryMaxValue = document.getElementById('salaryMaxValue');
+
+            
+            if (parseInt(salaryMin.value) > parseInt(salaryMax.value)) {
+                salaryMin.value = salaryMax.value;
+            }
+
+            if (parseInt(salaryMax.value) < parseInt(salaryMin.value)) {
+                salaryMax.value = salaryMin.value;
+            }
+
+            
+            salaryMinValue.textContent = '$' + salaryMin.value;
+            salaryMaxValue.textContent = '$' + salaryMax.value;
+        }
+
+         
+        document.addEventListener('DOMContentLoaded', function () {
+            updateSalaryValues();
+        });
+    </script>
+}
+
+
+@functions {
+    public string Truncate(string value, int length)
+    {
+        if (string.IsNullOrEmpty(value)) return string.Empty;
+        return value.Length <= length ? value : value.Substring(0, length) + "...";
+    }
+}

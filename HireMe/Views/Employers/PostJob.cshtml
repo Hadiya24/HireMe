@@ -1,0 +1,292 @@
+﻿@model HireMe.Models.JobPostModel
+@{
+    ViewData["Title"] = "Post a Job";
+}
+
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow">
+                <div class="card-body">
+                    <h2 class="text-center text-primary mb-4">Post a New Job</h2>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach (var state in ViewData.ModelState.Values)
+                                {
+                                    foreach (var error in state.Errors)
+                                    {
+                                        <li>@error.ErrorMessage</li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                    }
+                    <form asp-controller="Employers" asp-action="PostJob"  >
+                         <div class="form-group mb-3">
+                            <label asp-for="JobTitle">Job Title</label>
+                            <input asp-for="JobTitle" class="form-control" />
+                            <span asp-validation-for="JobTitle" class="text-danger"></span>
+                        </div>
+
+                         <div class="form-group mb-3">
+                            <label asp-for="JobDescription">Job Description</label>
+                            <textarea asp-for="JobDescription" class="form-control" rows="4"></textarea>
+                            <span asp-validation-for="JobDescription" class="text-danger"></span>
+                        </div>
+
+                         <div class="form-group mb-3">
+                            <label asp-for="Location">Location</label>
+                            <input asp-for="Location" class="form-control" />
+                            <span asp-validation-for="Location" class="text-danger"></span>
+                        </div>
+
+                         <div class="form-group mb-3">
+                            <label asp-for="EmploymentType">Employment Type</label>
+                            <select asp-for="EmploymentType" class="form-control">
+                                <option value="">Select Type</option>
+                                <option value="Full-Time">Full-Time</option>
+                                <option value="Part-Time">Part-Time</option>
+                                <option value="Contract">Contract</option>
+                                <option value="Temporary">Temporary</option>
+                                <option value="Internship">Internship</option>
+                            </select>
+                            <span asp-validation-for="EmploymentType" class="text-danger"></span>
+                        </div>
+
+                         <div class="form-group mb-3">
+                            <label asp-for="MinSalary">Minimum Salary</label>
+                            <input asp-for="MinSalary" class="form-control" placeholder="Minimum salary" />
+                            <span asp-validation-for="MinSalary" class="text-danger"></span>
+                        </div>
+
+                         <div class="form-group mb-3">
+                            <label asp-for="MaxSalary">Maximum Salary</label>
+                            <input asp-for="MaxSalary" class="form-control" placeholder="Maximum salary" />
+                            <span asp-validation-for="MaxSalary" class="text-danger"></span>
+                        </div>
+
+                         <div class="form-group mb-3">
+                            <label asp-for="Deadline">Application Deadline</label>
+                            <input asp-for="Deadline" class="form-control" type="date" />
+                            <span asp-validation-for="Deadline" class="text-danger"></span>
+                        </div>
+                         
+
+                         <div class="form-group mb-3">
+                            <label for="jobRequirementsInput">Job Requirements</label>
+                            <div class="input-group mb-2">
+                                <input type="text" class="form-control" id="jobRequirementsInput" placeholder="Enter a requirement">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="addRequirementBtn">Add</button>
+                                </div>
+                              
+                            </div>
+                            <div id="requirementsContainer" class="mb-2">
+                                
+                            </div>
+                            <input type="hidden" asp-for="Requirements" id="jobRequirements" name="Requirements">
+                              <span class="text-danger">
+                                @Html.ValidationMessage("Requirements")
+                            </span>
+
+                        </div>
+                         <div class="form-group mb-3">
+                            <label for="jobTagsInput">Job Tags/Categories</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="jobTagsInput" placeholder="e.g., Engineering, Marketing">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" id="addTagBtn">Add</button>
+                                </div>
+                            </div>
+                            <div id="tagsContainer" class="mt-2">
+                             </div>
+                            <input type="hidden" asp-for="Tags" id="jobTags" name="Tags">
+                            <span class="text-danger">
+                                @Html.ValidationMessage("Tags")
+                            </span>
+
+                        </div>
+
+ 
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Post Job</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+ 
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+           
+            
+           
+
+       
+        
+        
+            var initialRequirements = '@(Model?.Requirements ?? string.Empty)';
+            if (initialRequirements) {
+                var requirementsArray = initialRequirements.split(';');
+                requirementsArray.forEach(function (requirement) {
+                    if (requirement.trim() !== '') {
+                        addRequirement(requirement.trim());
+                    }
+                });
+            }
+
+
+
+ 
+                    var initialTags = '@(Model?.Tags ?? string.Empty)';
+                    if (initialTags) {
+                        var tagsArray = initialTags.split(',');
+                        tagsArray.forEach(function (tag) {
+                            if (tag.trim() !== '') {
+                                addTag(tag.trim());
+                            }
+                        });
+                    }
+
+                     
+                    function addTag(tagText) {
+                var tagsContainer = document.getElementById('tagsContainer');
+                if (tagText !== '') {
+                    var tag = document.createElement('span');
+                    tag.className = 'badge bg-secondary me-2 mb-2';
+                    tag.textContent = tagText;
+                    tag.style.cursor = 'pointer';
+                    tag.onclick = function () {
+                        tagsContainer.removeChild(tag);
+                        updateTagsInput();
+                    };
+
+                    tagsContainer.appendChild(tag);
+                   
+                    updateTagsInput();
+                }
+                    }
+
+
+         
+
+             function addRequirement(requirementText) {
+                        var requirementsContainer = document.getElementById('requirementsContainer');
+
+                        if (requirementText !== '') {
+                            var requirement = document.createElement('div');
+                            requirement.className = 'alert alert-secondary alert-dismissible fade show d-flex justify-content-between align-items-center';
+                            requirement.textContent = requirementText;
+
+                            var closeButton = document.createElement('button');
+                            closeButton.type = 'button';
+                            closeButton.className = 'btn-close';
+                            closeButton.setAttribute('data-bs-dismiss', 'alert');
+                            closeButton.setAttribute('aria-label', 'Close');
+                            closeButton.onclick = function () {
+                                  requirementsContainer.removeChild(requirement);
+                                updateRequirementsInput();
+                            };
+                            requirement.appendChild(closeButton);
+                            requirementsContainer.appendChild(requirement);
+
+                            updateRequirementsInput();
+                        }
+
+             }
+
+
+            document.getElementById('addTagBtn').addEventListener('click', function () {
+                var input = document.getElementById('jobTagsInput');
+                var tagsContainer = document.getElementById('tagsContainer');
+                var tagText = input.value.trim();
+
+                if (tagText !== '') {
+                     
+                    var existingTags = document.querySelectorAll('#tagsContainer .badge');
+                    var isTagAlreadyAdded = Array.from(existingTags).some(function (tag) {
+                        return tag.textContent.trim() === tagText;
+                    });
+
+                    if (!isTagAlreadyAdded) {
+                        var tag = document.createElement('span');
+                        tag.className = 'badge bg-secondary me-2 mb-2';
+                        tag.textContent = tagText;
+                        tag.style.cursor = 'pointer';
+                        tag.onclick = function () {
+                            tagsContainer.removeChild(tag);
+                            updateTagsInput();
+                        };
+
+                        tagsContainer.appendChild(tag);
+                    }
+                    input.value = '';
+                    updateTagsInput();
+                }
+            });
+
+
+            document.getElementById('addRequirementBtn').addEventListener('click', function() {
+                        var input = document.getElementById('jobRequirementsInput');
+                        var requirementsContainer = document.getElementById('requirementsContainer');
+                        if (input.value.trim() !== '') {
+                            var requirement = document.createElement('div');
+                            requirement.className = 'alert alert-secondary alert-dismissible fade show d-flex justify-content-between align-items-center';
+                            requirement.textContent = input.value;
+
+                            var closeButton = document.createElement('button');
+                            closeButton.type = 'button';
+                            closeButton.className = 'btn-close';
+                            closeButton.setAttribute('data-bs-dismiss', 'alert');
+                            closeButton.setAttribute('aria-label', 'Close');
+                            closeButton.onclick = function () {
+                            requirementsContainer.removeChild(requirement);
+                                updateRequirementsInput();
+                            };
+                            requirement.appendChild(closeButton);
+                            requirementsContainer.appendChild(requirement);
+                            input.value = '';
+                            updateRequirementsInput();
+                        }
+                    });
+
+
+
+           function updateRequirementsInput() {
+                        var requirements = [];
+                        document.querySelectorAll('#requirementsContainer .alert').forEach(function(req) {
+                            requirements.push(req.textContent.trim());
+                        });
+                        document.getElementById('jobRequirements').value = requirements.join('; ');
+                    }
+
+
+
+            function updateTagsInput() {
+                var tags = [];
+                document.querySelectorAll('#tagsContainer .badge').forEach(function (tag) {
+                    tags.push(tag.textContent);
+                });
+                document.getElementById('jobTags').value = tags.join(', ');
+            }
+
+
+
+        });
+
+
+
+
+
+    </script>
+
+
+}

@@ -1,0 +1,156 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Profile";
+    ViewData["ActivePage"] = ManageNavPages.Index;
+    var skillsList = Model.Input.Skills?.Split(",") ?? new string[0];
+
+}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
+<h3>@ViewData["Title"]</h3>
+<partial name="_StatusMessage" for="StatusMessage" />
+<div class="row">
+    <div class="col-md-6">
+        <form id="profile-form" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.FirstName" class="form-control" placeholder="First Name" />
+                <label asp-for="Input.FirstName">First Name</label>
+                <span asp-validation-for="Input.FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.LastName" class="form-control" placeholder="Last Name" />
+                <label asp-for="Input.LastName">Last Name</label>
+                <span asp-validation-for="Input.LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.PhoneNumber" class="form-control" placeholder="Phone Number" />
+                <label asp-for="Input.PhoneNumber">Phone Number</label>
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            
+            @if (Model.JobSeeker)
+            {
+            <div class="form-floating mb-3">
+                <input asp-for="Input.ProfessionalTitle" class="form-control" placeholder="Professional Title" />
+                <label asp-for="Input.ProfessionalTitle">Professional Title</label>
+                <span asp-validation-for="Input.ProfessionalTitle" class="text-danger"></span>
+            </div>
+           
+            <div class="form-floating mb-3">
+                <textarea asp-for="Input.EducationalBackground" class="form-control" placeholder="Educational Background"></textarea>
+                <label asp-for="Input.EducationalBackground">Educational Background</label>
+                <span asp-validation-for="Input.EducationalBackground" class="text-danger"></span>
+            </div>
+
+            <h3>Skills:</h3>
+            <div id="skills-container">
+                 
+            </div>
+
+            <i class="fas fa-plus-circle" style="cursor: pointer; font-size: 24px; color: #007bff;" onclick="addSkill()"></i>
+
+            <input type="hidden" asp-for="Input.Skills" />
+
+           
+
+            }
+            @if (Model.IsEmployer)
+            {
+                <div class="form-floating mb-3">
+                    <input asp-for="Input.CompanyName" class="form-control" placeholder="Company Name" />
+                    <label asp-for="Input.CompanyName">Company Name</label>
+                    <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <textarea asp-for="Input.CompanyDescription" class="form-control" placeholder="Company Description"></textarea>
+                    <label asp-for="Input.CompanyDescription">Company Description</label>
+                    <span asp-validation-for="Input.CompanyDescription" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating mb-3">
+                    <select asp-for="Input.Industry" asp-items="@(new SelectList(Model.Industries, "Id", "Name"))" class="form-control">
+                        <option value="">Select Industry</option>
+                    </select>
+                    <label asp-for="Input.Industry">Industry</label>
+                    <span asp-validation-for="Input.Industry" class="text-danger"></span>
+                </div>
+
+            }
+
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary">Save</button>
+        </form>
+    </div>
+</div>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function updateSkillNumbers() {
+            var skillGroups = document.getElementsByClassName("skill-group");
+            for (var i = 0; i < skillGroups.length; i++) {
+                var badge = skillGroups[i].getElementsByClassName("skill-number")[0];
+                badge.textContent = (i + 1).toString();
+            }
+        }
+
+        function addSkill(value = '') {
+            var container = document.getElementById("skills-container");
+            if (container.getElementsByClassName("skill-group").length < 5) {
+                var inputDiv = document.createElement("div");
+                inputDiv.classList.add("form-floating", "mb-3", "skill-group", "d-flex", "align-items-center");
+
+                var badge = document.createElement("span");
+                badge.classList.add("badge", "bg-secondary", "skill-number");
+                badge.style.fontSize = "1rem";
+                badge.style.marginRight = "10px";
+
+                var input = document.createElement("input");
+                input.type = "text";
+                input.classList.add("form-control", "skill-input");
+                input.value = value;
+                input.placeholder = "Skill " + (container.getElementsByClassName("skill-group").length + 1).toString();
+
+               
+
+                var removeButton = document.createElement("i");
+                removeButton.classList.add("fas", "fa-minus-circle", "remove-skill");
+                removeButton.style.cursor = "pointer";
+                removeButton.style.color = "#dc3545";
+                removeButton.style.fontSize = "24px";
+                removeButton.style.marginLeft = "10px";
+                removeButton.onclick = function () { removeSkill(inputDiv); };
+
+                inputDiv.appendChild(badge);
+                inputDiv.appendChild(input);
+                 inputDiv.appendChild(removeButton);
+                container.appendChild(inputDiv);
+
+                updateSkillNumbers();
+            }
+        }
+
+        function removeSkill(skillDiv) {
+            document.getElementById("skills-container").removeChild(skillDiv);
+            updateSkillNumbers();
+        }
+
+        document.getElementById("profile-form").addEventListener("submit", function () {
+            var skills = Array.from(document.getElementsByClassName("skill-input"))
+                .map(input => input.value)
+                .filter(value => value.trim() !== "")
+                .join(", ");
+            document.getElementById("Input_Skills").value = skills;
+        });
+
+         @foreach (var skill in skillsList)
+        {
+            <text>addSkill("@skill"); </text>
+        }
+    </script>
+}
