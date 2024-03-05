@@ -63,7 +63,7 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 await CreateAdminUserAndRole(app.Services);
 
-var num = 1;
+var num = 1 ;
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
